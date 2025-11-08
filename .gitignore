@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+*.log
+/.vscode/
+.apify/
+apify_storage/
+*.swp
+*.swo
+*~

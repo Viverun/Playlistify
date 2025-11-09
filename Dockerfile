@@ -23,12 +23,12 @@ RUN npm run build
 # Remove devDependencies after build
 RUN npm prune --production
 
-# Expose port
-EXPOSE 3001
+# Expose port (Apify uses APIFY_CONTAINER_PORT env var, defaults to 4000)
+EXPOSE 4000
 
-# Health check
+# Health check (Apify sets APIFY_CONTAINER_PORT, default to 4000 for Standby mode)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3001/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+  CMD node -e "const port = process.env.APIFY_CONTAINER_PORT || 4000; require('http').get('http://localhost:' + port + '/', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
 
 # Start the server
 CMD ["node", "dist/main.js"]

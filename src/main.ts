@@ -11,7 +11,10 @@ import { MCPRequest, MCPResponse } from "./types";
 export const MCP_COMMAND =
   process.env.MCP_COMMAND || "http://localhost:3001/mcp";
 
-const PORT = Number(process.env.PORT || 3001);
+// Use APIFY_CONTAINER_PORT for Standby mode, fallback to PORT or 3001
+const PORT = Number(
+  process.env.APIFY_CONTAINER_PORT || process.env.PORT || 3001
+);
 const ENABLE_NLP = process.env.ENABLE_NLP === "true";
 
 /**
@@ -58,9 +61,11 @@ async function start(): Promise<void> {
   // In Standby mode, Apify sets environment variables directly from task input
   // Prefer environment variables if they exist, otherwise use input
   const clientId = process.env.SPOTIFY_CLIENT_ID || input?.spotifyClientId;
-  const clientSecret = process.env.SPOTIFY_CLIENT_SECRET || input?.spotifyClientSecret;
-  const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN || input?.spotifyRefreshToken;
-  
+  const clientSecret =
+    process.env.SPOTIFY_CLIENT_SECRET || input?.spotifyClientSecret;
+  const refreshToken =
+    process.env.SPOTIFY_REFRESH_TOKEN || input?.spotifyRefreshToken;
+
   // Set environment variables for the application
   if (clientId) {
     process.env.SPOTIFY_CLIENT_ID = clientId;
@@ -84,7 +89,7 @@ async function start(): Promise<void> {
     hasRefreshToken: !!refreshToken,
     enableNLP: input?.enableNLP ?? true,
     port: input?.port ?? 3001,
-    source: process.env.SPOTIFY_CLIENT_ID ? 'env' : 'input',
+    source: process.env.SPOTIFY_CLIENT_ID ? "env" : "input",
   });
 
   const app = express();

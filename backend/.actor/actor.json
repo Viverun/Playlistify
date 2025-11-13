@@ -1,0 +1,14 @@
+{
+  "name": "playlistify-backend",
+  "title": "Playlistify Backend (Apify)",
+  "version": "0.1.0",
+  "build": {
+    "command": "npm run build",
+    "image": "node:20-alpine"
+  },
+  "run": {
+    "command": "node dist/main.js",
+    "memory": 1024
+  },
+  "ports": [3001]
+}

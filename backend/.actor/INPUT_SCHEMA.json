@@ -1,0 +1,12 @@
+{
+  "title": "Playlistify Backend input",
+  "type": "object",
+  "properties": {
+    "spotifyClientId": { "type": "string", "title": "Spotify Client ID" },
+    "spotifyClientSecret": { "type": "string", "title": "Spotify Client Secret" },
+    "spotifyRefreshToken": { "type": "string", "title": "Spotify Refresh Token" },
+    "enableNLP": { "type": "boolean", "title": "Enable NLP", "default": true },
+    "port": { "type": "integer", "title": "Port", "default": 3001 }
+  },
+  "required": ["spotifyClientId", "spotifyClientSecret", "spotifyRefreshToken"]
+}

@@ -604,15 +604,6 @@
         document.getElementById('userDisplay').style.display = 'flex';
         document.getElementById('userName').textContent = user.name;
       }
-
-      // Load saved config
-      const config = JSON.parse(localStorage.getItem('spotifyConfig') || 'null');
-      if (config) {
-        document.getElementById('apifyUrl').value = config.apifyUrl || '';
-        document.getElementById('spotifyClientId').value = config.clientId || '';
-        document.getElementById('spotifyClientSecret').value = config.clientSecret || '';
-        document.getElementById('refreshToken').value = config.refreshToken || '';
-      }
     }
 
     function showLogin() {
@@ -692,14 +683,13 @@
       btnText.textContent = 'Creating...';
       result.classList.remove('show');
       
-      // Save config
+      // Get config values
       const config = {
         apifyUrl: document.getElementById('apifyUrl').value,
         clientId: document.getElementById('spotifyClientId').value,
         clientSecret: document.getElementById('spotifyClientSecret').value,
         refreshToken: document.getElementById('refreshToken').value
       };
-      localStorage.setItem('spotifyConfig', JSON.stringify(config));
       
       const description = document.getElementById('playlistDescription').value;
       const name = document.getElementById('playlistName').value;

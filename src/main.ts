@@ -95,6 +95,13 @@ async function start(): Promise<void> {
     source: process.env.SPOTIFY_CLIENT_ID ? "env" : "input",
   });
 
+  if (clientId && clientSecret && refreshToken) {
+    spotifyHandler.initializeSpotify(clientId, clientSecret, refreshToken);
+  } else {
+    log.warning("Missing Spotify credentials. Spotify features will fail.");
+  }
+
+
   const app = express();
 
   // Middleware

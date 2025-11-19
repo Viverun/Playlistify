@@ -3,31 +3,35 @@ import { log } from "apify";
 import { searchCache, recommendCache } from "./cache";
 import { SpotifyTrack, MCPResponse } from "./types";
 
-const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || "";
-const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || "";
-const REFRESH_TOKEN = process.env.SPOTIFY_REFRESH_TOKEN || "";
-
-if (!CLIENT_ID || !CLIENT_SECRET || !REFRESH_TOKEN) {
-  log.warning(
-    "One or more Spotify credentials are missing. Set SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET and SPOTIFY_REFRESH_TOKEN environment variables."
-  );
-}
-
-const spotifyApi = new SpotifyWebApi({
-  clientId: CLIENT_ID,
-  clientSecret: CLIENT_SECRET,
-});
-
-spotifyApi.setRefreshToken(REFRESH_TOKEN);
-
+let spotifyApi: SpotifyWebApi;
 let tokenExpiresAt = 0;
 
+export function initializeSpotify(
+  clientId: string,
+  clientSecret: string,
+  refreshToken: string
+) {
+  spotifyApi = new SpotifyWebApi({
+    clientId,
+    clientSecret,
+  });
+  spotifyApi.setRefreshToken(refreshToken);
+  log.info("Spotify API initialized");
+}
+
+
+
 async function ensureAccessToken(): Promise<string> {
+  if (!spotifyApi) {
+    throw new Error("Spotify API not initialized. Call initializeSpotify() first.");
+  }
+
   // Only refresh if token is expired or about to expire (within 60 seconds)
   if (Date.now() < tokenExpiresAt - 60000) {
     log.debug("Using cached access token");
     return spotifyApi.getAccessToken() || "";
   }
+
 
   try {
     const data = await spotifyApi.refreshAccessToken();
@@ -236,7 +240,6 @@ export async function createPlaylist(
       timestamp: new Date().toISOString(),
     };
   } catch (err: any) {
-    log.error("Create playlist failed", { name, error: err?.message || err });
     return {
       status: "error",
       message: `Create playlist failed: ${err?.message || String(err)}`,
@@ -244,4 +247,5 @@ export async function createPlaylist(
   }
 }
 
-export default { searchTracks, getRecommendations, createPlaylist };
+export default { searchTracks, getRecommendations, createPlaylist, initializeSpotify };
+
